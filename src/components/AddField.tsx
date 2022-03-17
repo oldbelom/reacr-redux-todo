@@ -3,12 +3,17 @@ import { TextField, Button, Checkbox } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Task } from '../types';
 
-export const AddField = ({ dispatch }: any) => {
+interface AddFieldProps {
+    onAdd: (newTask: Omit<Task, 'id'>) => void;
+}
+
+export const AddField = ({ onAdd }: AddFieldProps) => {
     const [newTask, setNewTask] = React.useState({ text: '', completed: false });
 
     const handleClick = () => {
-        dispatch({ type: 'ADD_TASK', payload: newTask });
+        onAdd(newTask);
         setNewTask({ text: '', completed: false });
     };
 

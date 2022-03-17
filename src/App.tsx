@@ -2,23 +2,15 @@ import React from 'react';
 import { Paper, Divider, Button, List, Tabs, Tab } from '@mui/material';
 import { AddField } from './components/AddField';
 import { Item } from './components/Item';
-
-interface Task {
-    id: number;
-    text: string;
-    completed: boolean;
-}
-
-interface Action {
-    type: string;
-    payload: Omit<Task, 'id'>;
-}
+import { Task, TaskItem, Action } from './types';
 
 const reducer = (state: Task[], action: Action) => {
     switch (action.type) {
         case 'ADD_TASK':
             const newTask = { ...action.payload, id: state.length + 1 };
             return [...state, newTask];
+        case 'DELETE_TASK':
+            return state.filter((item) => item.id !== action.payload);
         default:
             return state;
     }
@@ -33,13 +25,25 @@ function App() {
         },
     ]);
 
+    const onAddTask = (newTask: Omit<Task, 'id'>) => {
+        dispatch({ type: 'ADD_TASK', payload: newTask });
+    };
+
+    const onDeleteTask = (id: number) => {
+        const deleteConfirm = window.confirm('Вы точно хотиту удалить задачу ?');
+        if (!deleteConfirm) {
+            return;
+        }
+        dispatch({ type: 'DELETE_TASK', payload: id });
+    };
+
     return (
         <div className="App">
             <Paper className="wrapper">
                 <Paper className="header" elevation={0}>
                     <h4>Список задач</h4>
                 </Paper>
-                <AddField dispatch={dispatch} />
+                <AddField onAdd={onAddTask} />
                 <Divider />
                 <Tabs value={0}>
                     <Tab label="Все" />
@@ -48,8 +52,14 @@ function App() {
                 </Tabs>
                 <Divider />
                 <List>
-                    {state.map((item: Task) => (
-                        <Item key={item.id} text={item.text} completed={item.completed} />
+                    {state.map((item: TaskItem) => (
+                        <Item
+                            key={item.id}
+                            id={item.id}
+                            text={item.text}
+                            completed={item.completed}
+                            onDelete={onDeleteTask}
+                        />
                     ))}
                 </List>
                 <Divider />
