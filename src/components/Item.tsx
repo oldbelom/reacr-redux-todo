@@ -4,13 +4,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { TaskItem } from '../types';
 
-interface ItemProps {
-    text: string;
-    completed: boolean;
-}
-
-export const Item = ({ text, completed }: ItemProps) => {
+export const Item = ({ text, completed, id, onDelete }: TaskItem) => {
     const [check, setCheck] = React.useState(completed);
     return (
         <ListItem>
@@ -26,7 +22,7 @@ export const Item = ({ text, completed }: ItemProps) => {
                     <IconButton>
                         <EditIcon style={{ fontSize: 20 }} />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={() => onDelete(id)}>
                         <DeleteOutlineIcon style={{ fontSize: 20 }} />
                     </IconButton>
                 </div>
