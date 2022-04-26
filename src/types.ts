@@ -6,6 +6,7 @@ export interface Task {
 
 export interface TaskItem extends Task {
     onDelete: (id: number) => void;
+    onComplete: (id: number) => void;
 }
 
 export interface Action {
