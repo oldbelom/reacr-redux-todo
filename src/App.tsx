@@ -7,10 +7,26 @@ import { Task, TaskItem, Action } from './types';
 const reducer = (state: Task[], action: Action) => {
     switch (action.type) {
         case 'ADD_TASK':
-            const newTask = { ...action.payload, id: state.length + 1 };
+            const newTask = { ...action.payload, id: state[state.length - 1]?.id + 1 || 1 };
             return [...state, newTask];
         case 'DELETE_TASK':
             return state.filter((item) => item.id !== action.payload);
+        case 'DELETE_ALL_TASKS':
+            return [];
+        case 'COMPLETE_TASK':
+            return state.map((item) => {
+                if (item.id === action.payload) {
+                    return {
+                        ...item,
+                        completed: !item.completed,
+                    };
+                }
+                return item;
+            });
+        case 'CHECK_ALL_TASKS':
+            return state.map((item) => ({ ...item, completed: true }));
+        case 'UNCHECK_ALL_TASKS':
+            return state.map((item) => ({ ...item, completed: false }));
         default:
             return state;
     }
@@ -31,10 +47,30 @@ function App() {
 
     const onDeleteTask = (id: number) => {
         const deleteConfirm = window.confirm('Вы точно хотиту удалить задачу ?');
-        if (!deleteConfirm) {
+        if (deleteConfirm) {
+            dispatch({ type: 'DELETE_TASK', payload: id });
+        }
+    };
+
+    const onDeleteAllTask = () => {
+        const deleteConfirm = window.confirm('Вы уверны, что хотите удалить все задачи ?');
+        if (deleteConfirm) {
+            dispatch({ type: 'DELETE_ALL_TASKS' });
+        }
+    };
+
+    const onComplete = (id: number) => {
+        dispatch({ type: 'COMPLETE_TASK', payload: id });
+    };
+
+    const isAllChecked = state.every((item) => item.completed === true);
+
+    const toggleAllChecked = () => {
+        if (isAllChecked) {
+            dispatch({ type: 'UNCHECK_ALL_TASKS' });
             return;
         }
-        dispatch({ type: 'DELETE_TASK', payload: id });
+        dispatch({ type: 'CHECK_ALL_TASKS' });
     };
 
     return (
@@ -59,13 +95,16 @@ function App() {
                             text={item.text}
                             completed={item.completed}
                             onDelete={onDeleteTask}
+                            onComplete={onComplete}
                         />
                     ))}
                 </List>
                 <Divider />
                 <div className="check-buttons">
-                    <Button>Отметить всё</Button>
-                    <Button>Очистить</Button>
+                    <Button onClick={toggleAllChecked}>
+                        {isAllChecked ? 'Снять отметки' : 'Отметить всё'}
+                    </Button>
+                    <Button onClick={onDeleteAllTask}>Очистить</Button>
                 </div>
             </Paper>
         </div>
