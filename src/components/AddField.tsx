@@ -3,7 +3,7 @@ import { TextField, Button, Checkbox } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { Task } from '../types';
+import { Task } from '../types/tasks';
 
 interface AddFieldProps {
     onAdd: (newTask: Omit<Task, 'id'>) => void;
